@@ -20,6 +20,7 @@
 #define     ADC_PORT_5  5
 #define     ADC_PORT_6  6
 
+//Œ»ó‚Ìæ‚è•t‚¯ó‘Ô‚É‡‚í‚¹‚ÄC³•K—v«
 #define LEFT_OUTSIDE	4
 #define LEFT_INSIDE		1
 #define CENTER			5
