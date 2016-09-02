@@ -229,10 +229,10 @@ int main(void) {
                 // Emergency stopped
                 state = STATE_STOP;
             }
-            
+            //カウント数が一定量を超えたら、ゴールモード
 			if(mCount >= MAX_STOP_COUNT) {
 				executeFinalAction();
-				break;
+				break;//return？？
 			}
 				
             switch (state) {
@@ -253,7 +253,8 @@ int main(void) {
                 break;
             //実質ここから開始？
             case STATE_MOVE:
-                setState(decideMoveAction());
+                setState(decideMoveAction());//setStateの引数が、decideMoveAction()なので分かりにくい。
+            	//ここ以降は、getSensor⇒judgeAction⇒setState⇒executeActionのような流れにしたい。
                 break;
                 
             case STATE_FIXED_MOVE://センサーを使わないモード。現在は未使用
@@ -1744,23 +1745,38 @@ int isSensor_111111(int *sensor)
 		(sensor[GOAL_JUDGE] == LINE_STATE_BLACK);
 }
 
+/**
+* ゴール後の処理（2015用）
+*/
 void executeFinalAction(void)
 {
 	printf("executeFinalAction!!\r\n");
 
 	//_delay_ms(50);
+	//定常旋回を900ms実行
 	MotorControl( RIGHT_MOTOR, 300 );
 	MotorControl( LEFT_MOTOR, 300 );
 	_delay_ms(900);
+
+	//停止100msを実行。モーターの慣性があるので、完全に停止するまで待つ。
+	//速度を取得して、速度を制御できれば、このような処理は不要。
 	Execute(MOVE_SELECTION_TYPE_STOP);
 	_delay_ms(100);
+
+	//カバー用のモーターを駆動して、カバー(フタ)を開ける
 	MotorControl( COVER_MOTOR, 300 );
 	_delay_ms(1500);
+
+	//カバー用モーターが停止するまで待つ
 	MotorControl( COVER_MOTOR, 0 );
 	_delay_ms(100);
-    MotorControl( RIGHT_MOTOR, 1623 );
+
+	//念のため、全身
+	MotorControl( RIGHT_MOTOR, 1623 );
     MotorControl( LEFT_MOTOR, 600 );
 	_delay_ms(500);
+
+	//モーター停止
 	Execute(MOVE_SELECTION_TYPE_STOP);
 }
 
