@@ -2033,4 +2033,5 @@ void LED_off(int i) {
 	unsigned char c = PORTC;
     PORTC = ~(c^(1<<i));
 #endif // _LED_ON_
+// mori test
 }
